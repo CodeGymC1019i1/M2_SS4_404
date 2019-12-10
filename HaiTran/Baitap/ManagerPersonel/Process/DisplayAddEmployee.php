@@ -1,30 +1,24 @@
 <?php
+session_start();
+if (!isset($_SESSION["username"]))
+    header("location: ../index.php");
 
-include_once "Employee.php";
-include_once "EmployeeManager.php";
+include_once "../Class/Employee.php";
+include_once "../Class/EmployeeManager.php";
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $index= (int) $_GET["id"];
-}
-
-$employeeManager = new EmployeeManager();
+$employeeManager = new EmployeeManager("../DataFileJson/Employees.json");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $index = (int) $_GET["index"];
     $employee = new Employee();
-
     $employee->setFirstName($_POST["firstname"]);
     $employee->setLastName($_POST["lastname"]);
     $employee->setBirthDay($_POST["birthday"]);
     $employee->setAddress($_POST["address"]);
     $employee->setPosition($_POST["position"]);
 
-    var_dump($index);
-    $employeeManager->editEmployee($index, $employee);
+    $employeeManager->add($employee);
+    var_dump($employeeManager);
 }
-
-$arr = $employeeManager->readFileJson();
-
 ?>
 
 
@@ -50,37 +44,37 @@ $arr = $employeeManager->readFileJson();
 <div>
     <form action="" method="post">
         <table>
-            <h1>Edit Employee</h1>
+            <h1>Add Employee</h1>
             <tr>
                 <td>First name: </td>
-                <td><input type="text" name="firstname" value="<?php echo $arr[$index]->firstName ?>"></td>
+                <td><input type="text" name="firstname"></td>
             </tr>
 
             <tr>
                 <td>Last name: </td>
-                <td><input type="text" name="lastname" value="<?php echo $arr[$index]->lastName ?>"></td>
+                <td><input type="text" name="lastname"></td>
             </tr>
 
             <tr>
                 <td>Birth day: </td>
-                <td><input type="date" name="birthday" value="<?php echo $arr[$index]->birthDay?>"></td>
+                <td><input type="date" name="birthday"></td>
             </tr>
 
             <tr>
                 <td>Address: </td>
-                <td><input type="text" name="address" value="<?php echo $arr[$index]->address?>"></td>
+                <td><input type="text" name="address"></td>
             </tr>
 
             <tr>
                 <td>Position: </td>
-                <td><input type="text" name="position" value="<?php echo $arr[$index]->position?>"></td>
+                <td><input type="text" name="position"></td>
             </tr>
             <tr>
-                <td><input type="submit" value="Update"></td>
-                <td><button><a href="index.php">Back</a></button></td>
+                <td><input type="submit" value="Add"></td>
+                <td><button><a href="../LoginLogout/Home.php">Back</a></button></td>
             </tr>
         </table>
-        <span name="index" value="<?php echo $index; ?>"</span>
+    <?php ?>
     </form>
 </div>
 </body>

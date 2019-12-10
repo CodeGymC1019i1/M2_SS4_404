@@ -1,10 +1,22 @@
 <?php
-include_once "EmployeeManager.php";
-include_once "Employee.php";
+session_start();
+include_once "Class/UserManager.php";
 
-$employeesManager = new EmployeeManager();
-
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+    $usersJson = new FileJson("DataFileJson/Users.json");
+    $users = $usersJson->readFileJson();
+    foreach ($users as $index => $user)
+        if ($user->username == $username && $user->password == $password) {
+            $_SESSION["username"] = $username;
+            $_SESSION["password"] = $password;
+            header("location: LoginLogout/Home.php");
+        } else
+            $message = "Wrong username or password! Please retype!";
+}
 ?>
+
 
 <!doctype html>
 <html lang="en">
@@ -18,40 +30,28 @@ $employeesManager = new EmployeeManager();
         div {
             position: absolute;
             margin-left: 30%;
-            border: #808080 solid 1px;
-            width: 30%;
             padding: 10px;
         }
-        table{
-            width: 100%;
-        }
-        td{
-            border-bottom: 1px solid #808080;
-        }
-        b{
-            color:
+
+        b {
+            size: 14px;
         }
     </style>
 </head>
 <body>
 <div>
-    <button><a href="DisplayAddEmployee.php">Add</a></button>
-    <table>
-        <caption><b>List Employees<b></caption><br>
-        <?php
-
-        $listEmployees = $employeesManager->readFileJson();
-        for($i = 0; $i < count($listEmployees); $i++):
-            ?>
-        <tr>
-            <td><?php echo $listEmployees[$i]->firstName.' '.$listEmployees[$i]->lastName; ?></td>
-            <td>
-                <button><a href="DisplayEditEmployee.php?id=<?php echo $i; ?>">Edit</a></button>
-                <button><a href="deleteEmployee.php?id=<?php echo $i; ?>">Delete</a></button>
-            </td>
-        </tr>
-        <?php endfor;?>
-    </table>
+    <form action="" method="post">
+        <fieldset>
+            <legend><b>Login</b></legend>
+            <br>
+            Username: <input type="text" name="username" placeholder="username"><br>
+            Password: <input type="password" name="password"><br>
+            <a href="LoginLogout/Home.php"><input type="submit" value="Login" name="login"></a>
+            <a href="Register/Register.php"><input type="button" value="Register"></a>
+        </fieldset>
+    </form>
+    <p><?php echo $message ?></p>
 </div>
+
 </body>
 </html>
